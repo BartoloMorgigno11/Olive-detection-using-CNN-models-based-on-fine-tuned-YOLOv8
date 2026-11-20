@@ -4,7 +4,10 @@ import axios from 'axios';
 import LinearBuffer from './LinearBuffer'; // Import the loading bar component
 
 const Background = styled.div`
-  background-image: url('/background.jpg');
+  background:
+    radial-gradient(circle at 15% 20%, rgba(196, 215, 133, 0.55), transparent 35%),
+    radial-gradient(circle at 85% 80%, rgba(74, 116, 72, 0.5), transparent 40%),
+    linear-gradient(135deg, #e8efd3, #9dbb7d 52%, #426b47);
   display: flex;
   align-items: center;
   justify-content: center;
