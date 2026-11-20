@@ -27,6 +27,7 @@ The analysis screenshot uses an example image from the [Olive Fruit Detection da
 
 - Python 3.10–3.12
 - Node.js 18+
+- [uv](https://docs.astral.sh/uv/) (recommended for the CUDA installation commands below)
 - A local YOLOv8 `.pt` weights file. The training data and weights are not distributed with this repository.
 
 ## Run locally
