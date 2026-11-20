@@ -21,7 +21,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--epochs", type=int, default=80)
     parser.add_argument("--batch", type=int, default=16)
     parser.add_argument("--imgsz", type=int, default=640)
-    parser.add_argument("--device", default=0, help="CUDA device index, or 'cpu'.")
+    parser.add_argument(
+        "--device",
+        default=None,
+        help="CUDA device index (for example '0') or 'cpu'; omitted = let Ultralytics choose.",
+    )
     parser.add_argument("--project", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--name", default="olive-v2")
     return parser.parse_args()
