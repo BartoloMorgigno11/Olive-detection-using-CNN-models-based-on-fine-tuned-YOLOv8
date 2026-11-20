@@ -22,14 +22,13 @@ A full-stack prototype for analysing olive images with a fine-tuned YOLOv8 detec
 ### Backend
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r backend/requirements.txt
+uv venv .venv --python 3.12
+uv pip install --python .\.venv\Scripts\python.exe --torch-backend=cu124 -r backend/requirements.txt
 $env:OLIVE_MODEL_PATH = 'C:\path\to\olive-yolov8n-v2.pt'
-python backend/server.py
+.\.venv\Scripts\python.exe backend/server.py
 ```
 
-The API starts on `http://localhost:3001`. Alternatively, place the weights at `backend/yolov8/olive-yolov8n-v2.pt`; this directory is intentionally ignored by Git.
+The command installs a CUDA build of PyTorch (`cu124`) for compatible NVIDIA GPUs. For CPU-only execution, use `pip install -r backend/requirements.txt` instead. The API starts on `http://localhost:3001`. Alternatively, place the weights at `backend/yolov8/olive-yolov8n-v2.pt`; this directory is intentionally ignored by Git.
 
 ### Frontend
 
