@@ -52,9 +52,39 @@ npm start
 
 The frontend opens on `http://localhost:3000`.
 
-## Data and model availability
+## Train a local detector from scratch
 
-The original image dataset and trained weights are excluded because their redistribution status must be verified. The application gives a clear error when weights are not configured rather than silently failing. To make a public demo, add images you own or are licensed to share and distribute the model separately through a release asset or documented download.
+The repository excludes the dataset and fine-tuned weights, but the following steps reproduce a local model.
+
+1. On [Roboflow Universe, open Olive Fruit Detection v1](https://universe.roboflow.com/aliasghar/olive-fruit-detection/dataset/1), choose **Download dataset**, select **YOLOv8**, and extract the ZIP so the following folders exist:
+
+   ```text
+   neural_network/data/olive-fruit-detection/train/images
+   neural_network/data/olive-fruit-detection/valid/images
+   neural_network/data/olive-fruit-detection/test/images
+   ```
+
+2. Download the public YOLOv8n base checkpoint:
+
+   ```powershell
+   New-Item -ItemType Directory -Force .\neural_network\models
+   Invoke-WebRequest -Uri 'https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8n.pt' -OutFile '.\neural_network\models\yolov8n.pt'
+   ```
+
+3. Train the detector (the script selects CUDA automatically when the installed PyTorch build can see an NVIDIA GPU):
+
+   ```powershell
+   .\.venv\Scripts\python.exe .\neural_network\train_v2.py
+   ```
+
+4. Configure the newly produced model for the backend:
+
+   ```powershell
+   New-Item -ItemType Directory -Force .\backend\yolov8
+   Copy-Item .\neural_network\runs\olive-v2\weights\best.pt .\backend\yolov8\olive-yolov8n-v2.pt
+   ```
+
+The dataset source is licensed under CC BY 4.0. The dataset, checkpoints, fine-tuned weights, and training outputs remain ignored by Git; do not commit or redistribute them without respecting their respective licences.
 
 ## Limitations
 
