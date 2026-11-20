@@ -5,6 +5,8 @@ __pycache__/
 *.pyd
 *.py[cod]
 .venv/
+neural_network/.train-venv/
+neural_network/*.log
 
 # General Node/React ignores
 node_modules/
