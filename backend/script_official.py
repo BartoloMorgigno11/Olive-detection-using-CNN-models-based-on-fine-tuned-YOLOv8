@@ -12,7 +12,7 @@ from pathlib import Path
 # Initial settings
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 BACKEND_ROOT = Path(__file__).resolve().parent
-DEFAULT_MODEL_PATH = BACKEND_ROOT / "yolov8" / "yolov8m_olive_trained.pt"
+DEFAULT_MODEL_PATH = BACKEND_ROOT / "yolov8" / "olive-yolov8n-v2.pt"
 
 # Helper functions
 def load_image(image_path):

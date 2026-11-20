@@ -25,11 +25,11 @@ A full-stack prototype for analysing olive images with a fine-tuned YOLOv8 detec
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r backend/requirements.txt
-$env:OLIVE_MODEL_PATH = 'C:\path\to\yolov8m_olive_trained.pt'
+$env:OLIVE_MODEL_PATH = 'C:\path\to\olive-yolov8n-v2.pt'
 python backend/server.py
 ```
 
-The API starts on `http://localhost:3001`. Alternatively, place the weights at `backend/yolov8/yolov8m_olive_trained.pt`; this directory is intentionally ignored by Git.
+The API starts on `http://localhost:3001`. Alternatively, place the weights at `backend/yolov8/olive-yolov8n-v2.pt`; this directory is intentionally ignored by Git.
 
 ### Frontend
 
