@@ -11,6 +11,18 @@ A full-stack prototype for analysing olive images with a fine-tuned YOLOv8 detec
 - `neural_network/` — notebooks documenting data preparation, training, and experimentation.
 - `test/` — place non-restricted demo images here for local validation.
 
+## Demo
+
+**Upload flow**
+
+![Olive Detection upload screen](docs/images/upload-screen.png)
+
+**Analysis report**
+
+![Olive Detection analysis report](docs/images/analysis-results.png)
+
+The analysis screenshot uses an example image from the [Olive Fruit Detection dataset on Roboflow Universe](https://universe.roboflow.com/aliasghar/olive-fruit-detection/dataset/1), licensed under CC BY 4.0. The reported detections and estimates were generated locally with the fine-tuned model described in this repository.
+
 ## Requirements
 
 - Python 3.10–3.12
