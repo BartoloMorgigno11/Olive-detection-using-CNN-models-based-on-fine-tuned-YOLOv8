@@ -6,12 +6,14 @@ import argparse
 from pathlib import Path
 
 from ultralytics import YOLO
+import yaml
 
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_DATASET = ROOT / "olive-v2.yaml"
 DEFAULT_OUTPUT = ROOT / "runs"
 DEFAULT_MODEL = ROOT / "models" / "yolov8n.pt"
+RESOLVED_DATASET = ROOT / ".olive-v2.resolved.yaml"
 
 
 def parse_args() -> argparse.Namespace:
@@ -41,19 +43,28 @@ def main() -> None:
             "neural_network/models before training."
         )
 
-    model = YOLO(str(args.model))
-    model.train(
-        data=str(args.data),
-        epochs=args.epochs,
-        batch=args.batch,
-        imgsz=args.imgsz,
-        device=args.device,
-        project=str(args.project),
-        name=args.name,
-        patience=15,
-        seed=42,
-        pretrained=True,
-    )
+    dataset_config = yaml.safe_load(args.data.read_text(encoding="utf-8"))
+    dataset_root = Path(dataset_config["path"])
+    if not dataset_root.is_absolute():
+        dataset_config["path"] = str((args.data.parent / dataset_root).resolve())
+    RESOLVED_DATASET.write_text(yaml.safe_dump(dataset_config, sort_keys=False), encoding="utf-8")
+
+    try:
+        model = YOLO(str(args.model))
+        model.train(
+            data=str(RESOLVED_DATASET),
+            epochs=args.epochs,
+            batch=args.batch,
+            imgsz=args.imgsz,
+            device=args.device,
+            project=str(args.project),
+            name=args.name,
+            patience=15,
+            seed=42,
+            pretrained=True,
+        )
+    finally:
+        RESOLVED_DATASET.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

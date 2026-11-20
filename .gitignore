@@ -8,6 +8,7 @@ __pycache__/
 neural_network/.train-venv/
 neural_network/*.log
 neural_network/models/
+neural_network/.olive-v2.resolved.yaml
 
 # General Node/React ignores
 node_modules/
