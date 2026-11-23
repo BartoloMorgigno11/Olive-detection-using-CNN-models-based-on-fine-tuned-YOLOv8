@@ -137,6 +137,30 @@ def clean_runtime_folders():
     progress_file = BACKEND_ROOT / 'progress.json'
     update_progress(progress_file, 0, 1)
 
+def get_analysis_status():
+    progress_file = BACKEND_ROOT / 'progress.json'
+    if not progress_file.exists():
+        return None
+    try:
+        with progress_file.open() as file:
+            return json.load(file).get('status')
+    except (OSError, json.JSONDecodeError):
+        return None
+
+def completed_results_error():
+    """Return an error response unless the current artefacts belong to a completed job."""
+    status = get_analysis_status()
+    if JOB_RUNNING or status == 'running':
+        return jsonify({'error': 'Analysis is still running.'}), 409
+    if status == 'failed':
+        return jsonify({'error': 'The analysis failed; incomplete artefacts are unavailable.'}), 409
+    if status != 'completed':
+        return jsonify({'error': 'No completed analysis is available.'}), 404
+    summary_file = Path(app.config['RESULTS_FOLDER']) / 'summary_results.json'
+    if not summary_file.is_file():
+        return jsonify({'error': 'Completed analysis summary is unavailable.'}), 404
+    return None
+
 @app.errorhandler(413)
 def request_too_large(_error):
     return jsonify({'error': 'Upload exceeds the 20 MiB request limit.'}), 413
@@ -155,8 +179,9 @@ def get_progress():
 # Endpoint to fetch processed images
 @app.route('/get_results', methods=['GET'])
 def get_results():
-    if JOB_RUNNING:
-        return jsonify({'error': 'Analysis is still running.'}), 409
+    error = completed_results_error()
+    if error:
+        return error
     results_list = []
     for root, dirs, files in os.walk(app.config['RESULTS_FOLDER']):
         for file in files:
@@ -168,8 +193,9 @@ def get_results():
 # Endpoint to fetch aggregated summary results
 @app.route('/get_summary_results', methods=['GET'])
 def get_summary_results():
-    if JOB_RUNNING:
-        return jsonify({'error': 'Analysis is still running.'}), 409
+    error = completed_results_error()
+    if error:
+        return error
     summary_file = os.path.join(app.config['RESULTS_FOLDER'], 'summary_results.json')
     if os.path.exists(summary_file):
         with open(summary_file, 'r') as f:
@@ -182,6 +208,9 @@ def get_summary_results():
 @app.route('/download_results', methods=['GET'])
 def download_results():
     try:
+        error = completed_results_error()
+        if error:
+            return error
         if not os.path.exists(app.config['RESULTS_FOLDER']):
             return jsonify({'error': 'No results available for download.'}), 404
 
@@ -221,6 +250,9 @@ def download_results():
 # Endpoint to serve generated result files
 @app.route('/results/<path:filepath>', methods=['GET'])
 def serve_results(filepath):
+    error = completed_results_error()
+    if error:
+        return error
     return send_from_directory(app.config['RESULTS_FOLDER'], filepath)
 
 if __name__ == '__main__':

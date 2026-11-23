@@ -46,6 +46,14 @@ class GeometryAndHeuristicTests(unittest.TestCase):
             self.assertEqual(json.loads(progress_file.read_text())["status"], "completed")
             self.assertEqual(json.loads(progress_file.read_text())["percentage"], 100)
 
+    def test_progress_marks_worker_errors_as_failed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            progress_file = Path(tmp) / "progress.json"
+            analysis.update_progress(progress_file, 0, 1, error="inference failed")
+            progress = json.loads(progress_file.read_text())
+            self.assertEqual(progress["status"], "failed")
+            self.assertEqual(progress["error"], "inference failed")
+
 
 class ApiBoundaryTests(unittest.TestCase):
     def setUp(self):
@@ -143,8 +151,33 @@ class ApiBoundaryTests(unittest.TestCase):
         self.assertEqual(self.client.get("/get_results").status_code, 409)
         self.assertEqual(self.client.get("/get_summary_results").status_code, 409)
         server.JOB_RUNNING = False
-        self.assertEqual(self.client.get("/get_results").status_code, 200)
-        self.assertEqual(self.client.get("/get_summary_results").status_code, 200)
+        with patch.object(server, "get_analysis_status", return_value="completed"):
+            self.assertEqual(self.client.get("/get_results").status_code, 200)
+            self.assertEqual(self.client.get("/get_summary_results").status_code, 200)
+
+    def test_download_and_file_serving_wait_for_completion(self):
+        results = Path(server.app.config["RESULTS_FOLDER"])
+        (results / "summary_results.json").write_text("{}")
+        (results / "olive_pipeline.jpg").write_bytes(b"image")
+        server.JOB_RUNNING = True
+        self.assertEqual(self.client.get("/download_results").status_code, 409)
+        self.assertEqual(self.client.get("/results/olive_pipeline.jpg").status_code, 409)
+
+    def test_failed_jobs_do_not_expose_partial_artifacts(self):
+        results = Path(server.app.config["RESULTS_FOLDER"])
+        (results / "summary_results.json").write_text("{}")
+        (results / "olive_pipeline.jpg").write_bytes(b"partial image")
+        with patch.object(server, "get_analysis_status", return_value="failed"):
+            self.assertEqual(self.client.get("/download_results").status_code, 409)
+            self.assertEqual(self.client.get("/results/olive_pipeline.jpg").status_code, 409)
+
+    def test_completed_jobs_can_download_and_serve_artifacts(self):
+        results = Path(server.app.config["RESULTS_FOLDER"])
+        (results / "summary_results.json").write_text("{}")
+        (results / "olive_pipeline.jpg").write_bytes(b"completed image")
+        with patch.object(server, "get_analysis_status", return_value="completed"):
+            self.assertEqual(self.client.get("/download_results").status_code, 200)
+            self.assertEqual(self.client.get("/results/olive_pipeline.jpg").status_code, 200)
 
     def test_previous_results_require_an_explicit_reset(self):
         Path(server.app.config["RESULTS_FOLDER"], "summary_results.json").write_text("{}")

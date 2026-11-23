@@ -304,6 +304,9 @@ const App = () => {
   };
 
   const handleResetAnalysis = async () => {
+    if (isAnalyzing) {
+      return;
+    }
     try {
       await axios.post('http://localhost:3001/clean_folders');
       setSelectedImages([]);
@@ -430,6 +433,7 @@ const App = () => {
         <input
           type="file"
           id="file-input"
+          aria-label="Upload Images"
           multiple
           accept="image/png,image/jpeg"
           style={{ display: 'none' }}
@@ -555,10 +559,13 @@ const App = () => {
             <Button onClick={handleDownloadResults}>
               Download Results
             </Button>
-            <Button onClick={handleResetAnalysis}>
-              Start a New Analysis
-            </Button>
           </>
+        )}
+
+        {(isUploadComplete || showResults || uploadStatus) && (
+          <Button onClick={handleResetAnalysis} disabled={isAnalyzing}>
+            Start a New Analysis
+          </Button>
         )}
       </Container>
     </Background>
