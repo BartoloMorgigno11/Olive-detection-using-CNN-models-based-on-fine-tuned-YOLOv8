@@ -1,8 +1,14 @@
 import { render, screen } from '@testing-library/react';
-import App from './App';
 
-test('renders learn react link', () => {
+jest.mock('axios', () => ({
+  get: jest.fn(),
+  post: jest.fn(),
+}));
+
+import App from './App_official';
+
+test('renders the olive detection upload entry point', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  expect(screen.getByText(/olive detection/i)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /upload images/i })).toBeInTheDocument();
 });

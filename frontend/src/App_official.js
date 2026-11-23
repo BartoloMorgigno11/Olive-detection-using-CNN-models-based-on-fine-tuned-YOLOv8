@@ -248,16 +248,6 @@ const App = () => {
   const previewItemsPerPage = 9; // Keep nine previews per page
 
   useEffect(() => {
-    const cleanFolders = async () => {
-      try {
-        await axios.post('http://localhost:3001/clean_folders');
-        console.log('Folders cleaned successfully.');
-      } catch (error) {
-        console.error('Error while cleaning folders:', error);
-      }
-    };
-    cleanFolders();
-
     // Clear the polling interval when the component unmounts
     return () => {
       if (pollingIntervalRef.current) {
@@ -307,9 +297,28 @@ const App = () => {
         setIsAnalyzing(false);
       }
     } catch (error) {
-      setUploadStatus('Error during upload or analysis.');
+      setUploadStatus(error.response?.data?.error || 'Error during upload or analysis.');
       console.error('Error during upload:', error);
       setIsAnalyzing(false);
+    }
+  };
+
+  const handleResetAnalysis = async () => {
+    try {
+      await axios.post('http://localhost:3001/clean_folders');
+      setSelectedImages([]);
+      setResults(null);
+      setSummaryResults(null);
+      setShowResults(false);
+      setIsUploadComplete(false);
+      setHidePreview(false);
+      setShowSuccessMessage(false);
+      setShowViewResultsButton(true);
+      setUploadStatus(null);
+      setProgress(0);
+    } catch (error) {
+      setUploadStatus(error.response?.data?.error || 'Unable to clear the previous analysis.');
+      setShowSuccessMessage(true);
     }
   };
 
@@ -321,7 +330,11 @@ const App = () => {
 
         setProgress(progressData.percentage);
 
-        if (progressData.percentage >= 100) {
+        if (progressData.status === 'failed') {
+          clearInterval(pollingIntervalRef.current);
+          setIsAnalyzing(false);
+          setUploadStatus(`Analysis failed: ${progressData.error || 'unknown error'}`);
+        } else if (progressData.status === 'completed') {
           finalizeAnalysis();
         }
       } catch (error) {
@@ -418,6 +431,7 @@ const App = () => {
           type="file"
           id="file-input"
           multiple
+          accept="image/png,image/jpeg"
           style={{ display: 'none' }}
           onChange={handleFileChange}
         />
@@ -499,7 +513,7 @@ const App = () => {
                 <h2>Distribution Charts</h2>
 
                   <ResultImage src="http://localhost:3001/results/plot/olive_maturity_distribution.png" alt="Maturity distribution chart" />
-                  <ResultImage src="http://localhost:3001/results/plot/olive_weight_distribution.png" alt="Weight distribution chart" />
+                  <ResultImage src="http://localhost:3001/results/plot/olive_area_proxy_distribution.png" alt="Image-space area proxy distribution chart" />
 
               </LeftColumn>
 
@@ -532,18 +546,17 @@ const App = () => {
               <SummaryContainer>
                 <h3>SUMMARY</h3>
                 <p>Total detected olives: {summaryResults.total_olives}</p>
-                <p>Approximate total olive weight: {summaryResults.total_weight_approx.toFixed(2)} g</p>
-                <p>Estimated total weight (olive count * 6 g): {summaryResults.total_weight_average.toFixed(2)} g</p>
-                {summaryResults.adjusted_weight_count > 0 && (
-                  <p>
-                    <strong>Note:</strong> For {summaryResults.adjusted_weight_count} detected olives, the weight was set to 6 grams because the bounding box area was too large for a reliable estimate.
-                  </p>
-                )}
+                <p>Image-space ellipse area proxy: {summaryResults.total_area_proxy_px2.toFixed(0)} px²</p>
+                <p>Mean area proxy per detected olive: {summaryResults.average_area_proxy_px2.toFixed(0)} px²</p>
+                <p><strong>Experimental note:</strong> area proxies are not calibrated physical weights and vary with image scale and camera distance.</p>
               </SummaryContainer>
             )}
 
             <Button onClick={handleDownloadResults}>
               Download Results
+            </Button>
+            <Button onClick={handleResetAnalysis}>
+              Start a New Analysis
             </Button>
           </>
         )}
