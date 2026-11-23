@@ -1,8 +1,8 @@
 # Olive Ripeness Detection
 
-A full-stack prototype for analysing olive images with a fine-tuned YOLOv8 detector. The application detects olives, estimates a pixel-based weight proxy, and classifies ripeness from image colour features. A React interface submits images to a Flask API and presents the generated report.
+A full-stack prototype for analysing olive images with a fine-tuned YOLOv8 detector. The application detects olives, reports an image-space ellipse-area proxy, and classifies ripeness from image colour features. A React interface submits images to a Flask API and presents the generated report.
 
-> This is a portfolio prototype, not a calibrated agricultural measurement system. Weight and ripeness estimates depend on camera distance, illumination, and the supplied model weights.
+> This is a portfolio prototype, not a calibrated agricultural measurement system. The area proxy is measured in px², not grams; it changes with camera distance and image scale. Ripeness labels are image-colour heuristics and are sensitive to illumination.
 
 ## Architecture
 
@@ -19,9 +19,7 @@ A full-stack prototype for analysing olive images with a fine-tuned YOLOv8 detec
 
 **Analysis report**
 
-![Olive Detection analysis report](docs/images/analysis-results.png)
-
-The analysis screenshot uses an example image from the [Olive Fruit Detection dataset on Roboflow Universe](https://universe.roboflow.com/aliasghar/olive-fruit-detection/dataset/1), licensed under CC BY 4.0. The reported detections and estimates were generated locally with the fine-tuned model described in this repository.
+No current analysis-result screenshot is included: the historical image in the repository predates the area-proxy correction and must not be read as evidence for this version. Generate a fresh report locally with a permitted image and local weights before adding a new screenshot.
 
 ## Requirements
 
@@ -89,9 +87,11 @@ The dataset source is licensed under CC BY 4.0. The dataset, checkpoints, fine-t
 
 ## Limitations
 
-- Weight is an image-space approximation, not a physical scale measurement.
-- Ripeness is a colour-based heuristic and is sensitive to lighting.
+- The ellipse-area proxy is not a physical scale measurement and must not be interpreted as grams without calibration.
+- Ripeness is a colour-based heuristic (gray-intensity thresholds at 140 and 180) and is not agronomically validated.
 - This repository does not claim production or agronomic validation.
+- The upload lock is process-local. Run one Flask worker only; multi-process or multi-instance deployment needs shared job storage and locking, which are outside this prototype.
+- See [experimental evidence and limits](docs/EXPERIMENTAL_EVIDENCE.md) before interpreting historic notebook outputs as model metrics.
 
 ## License
 
