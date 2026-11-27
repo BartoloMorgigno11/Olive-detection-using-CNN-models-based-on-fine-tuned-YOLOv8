@@ -1,5 +1,7 @@
 # Olive Ripeness Detection
 
+[![Backend and frontend checks](https://github.com/BartoloMorgigno11/Olive-detection-using-CNN-models-based-on-fine-tuned-YOLOv8/actions/workflows/ci.yml/badge.svg)](https://github.com/BartoloMorgigno11/Olive-detection-using-CNN-models-based-on-fine-tuned-YOLOv8/actions/workflows/ci.yml)
+
 A full-stack prototype for analysing olive images with a fine-tuned YOLOv8 detector. The application detects olives, reports an image-space ellipse-area proxy, and classifies ripeness from image colour features. A React interface submits images to a Flask API and presents the generated report.
 
 > This is a portfolio prototype, not a calibrated agricultural measurement system. The area proxy is measured in px², not grams; it changes with camera distance and image scale. Ripeness labels are image-colour heuristics and are sensitive to illumination.
@@ -19,7 +21,7 @@ A full-stack prototype for analysing olive images with a fine-tuned YOLOv8 detec
 
 **Analysis report**
 
-No current analysis-result screenshot is included: the historical image in the repository predates the area-proxy correction and must not be read as evidence for this version. Generate a fresh report locally with a permitted image and local weights before adding a new screenshot.
+No current analysis-result screenshot is included: the historical image (`docs/images/analysis-results.png`) in the repository predates the area-proxy correction and must not be read as evidence for this version. Generate a fresh report locally with a permitted image and local weights before adding a new screenshot.
 
 ## Requirements
 
@@ -95,4 +97,4 @@ The dataset source is licensed under CC BY 4.0. The dataset, checkpoints, fine-t
 
 ## License
 
-The source code is available under the MIT License. Third-party data, trained weights, and their licences are not included.
+The repository includes an MIT license notice for its own source code. Ultralytics YOLO is a third-party dependency distributed under [AGPL-3.0 or an Enterprise license](https://www.ultralytics.com/license). The MIT notice does not override applicable third-party obligations or establish compliance for an integrated application. Licensing compatibility must be assessed before further redistribution or deployment. No Enterprise license is claimed. Dataset archives and trained weights are not distributed with this repository.
