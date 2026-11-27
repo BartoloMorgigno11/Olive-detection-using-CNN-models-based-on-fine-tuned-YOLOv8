@@ -27,3 +27,7 @@ When opening a PR, include:
 - Any follow-up work that might be required.
 
 We appreciate every contribution—thank you for helping improve Olive Detection Project!
+
+## Licensing
+
+Contributions intended for inclusion in the project's original source code must be compatible with AGPL-3.0-only. Submit only material you are entitled to contribute, preserve existing notices, and identify any third-party code or assets and their applicable terms. Do not submit restricted datasets or model weights without verifying redistribution rights.

@@ -99,4 +99,6 @@ The dataset source is licensed under CC BY 4.0. The dataset, checkpoints, fine-t
 
 ## License
 
-The repository includes an MIT license notice for its own source code. Ultralytics YOLO is a third-party dependency distributed under [AGPL-3.0 or an Enterprise license](https://www.ultralytics.com/license). The MIT notice does not override applicable third-party obligations or establish compliance for an integrated application. Licensing compatibility must be assessed before further redistribution or deployment. No Enterprise license is claimed. Dataset archives and trained weights are not distributed with this repository.
+The original project source code in the current revision is licensed under the [GNU Affero General Public License, version 3 only (AGPL-3.0-only)](LICENSE). Third-party materials retain their own licenses. See [NOTICE](NOTICE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for attribution, historical licensing, and dependency scope.
+
+Ultralytics YOLO is used under its published [AGPL-3.0 licensing terms](https://www.ultralytics.com/license); no Enterprise license is claimed. The dataset archives and trained weights are not distributed here. This source-code licensing change does not by itself establish full compliance for the integrated model or a deployed service. See [model and data distribution notes](docs/MODEL_AND_DATA_LICENSING.md) before redistribution or network deployment.
