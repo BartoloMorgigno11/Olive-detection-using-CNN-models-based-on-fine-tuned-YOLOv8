@@ -6,6 +6,8 @@ A full-stack prototype for analysing olive images with a fine-tuned YOLOv8 detec
 
 > This is a portfolio prototype, not a calibrated agricultural measurement system. The area proxy is measured in px², not grams; it changes with camera distance and image scale. Ripeness labels are image-colour heuristics and are sensitive to illumination.
 
+**Project authorship:** Individual project by Bartolo Morgigno.
+
 ## Architecture
 
 - `frontend/` — React interface for image upload, progress tracking, and reports.
